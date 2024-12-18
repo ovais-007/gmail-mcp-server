@@ -1,14 +1,18 @@
 {
   "name": "gmail-mcp-server",
   "version": "1.0.0",
-  "description": "Gmail integration for MCP", 
-  "main": "index.js",
+  "description": "Gmail integration for MCP",
+  "main": "index.js", 
+  "type": "module",
   "scripts": {
     "start": "node index.js"
   },
   "author": "ovais-007",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.5.0",
-    "nodemailer": "^6.9.8"
+    "nodemailer": "^6.9.8",
+    "googleapis": "^132.0.0",
+    "dotenv": "^16.3.1",
+    "mustache": "^4.2.0"
   }
 }
