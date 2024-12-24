@@ -1,0 +1,10 @@
+Subject: Introduction - {{name}}
+
+Hi {{#recipientName}}{{recipientName}}{{/recipientName}}{{^recipientName}}there{{/recipientName}},
+
+I'm {{name}}, reaching out to connect and explore potential opportunities.
+
+{{customMessage}}
+
+Best regards,
+{{name}}
