@@ -29,10 +29,10 @@ try {
   // Try relative to script location first
   const __dirname = path.dirname(new URL(import.meta.url).pathname);
   const envFileRelativeToScript = path.join(__dirname, '.env');
-  
+
   // Try current working directory
   const envFileCwd = path.join(process.cwd(), '.env');
-  
+
   if (fs.existsSync(envFileRelativeToScript)) {
     dotenv.config({ path: envFileRelativeToScript });
     console.error(`Loaded .env from: ${envFileRelativeToScript}`);
@@ -143,15 +143,15 @@ class GmailMCPServer {
               required: ['id'],
             },
           },
-            {
-              name: 'delete_email',
-              description: 'Move an email to trash by ID (requires OAuth2 config)',
-              inputSchema: {
-                type: 'object',
-                properties: { id: { type: 'string', description: 'Gmail message ID' } },
-                required: ['id'],
-              },
+          {
+            name: 'delete_email',
+            description: 'Move an email to trash by ID (requires OAuth2 config)',
+            inputSchema: {
+              type: 'object',
+              properties: { id: { type: 'string', description: 'Gmail message ID' } },
+              required: ['id'],
             },
+          },
           {
             name: 'list_email_templates',
             description: 'List available email templates',
@@ -211,7 +211,7 @@ class GmailMCPServer {
 
   async createTransporter() {
     console.error('Creating transporter with user:', process.env.GMAIL_USER);
-    
+
     return nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -229,7 +229,7 @@ class GmailMCPServer {
     }
 
     const transporter = await this.createTransporter();
-    
+
     const mailOptions = {
       from: process.env.GMAIL_USER,
       to: to,
@@ -253,33 +253,33 @@ class GmailMCPServer {
     const { to, name = 'Mohammad Ovais', customMessage = '' } = args;
 
     const subject = `Introduction - ${name}`;
-    
+
     const body = `Dear Recipient,
 
-I hope this email finds you well. I'm writing to introduce myself - I'm ${name}, and I wanted to reach out to connect with you.
+    I hope this email finds you well. I'm writing to introduce myself - I'm ${name}, and I wanted to reach out to connect with you.
 
-${customMessage ? customMessage + '\n\n' : ''}I'm a software engineer with experience in various programming technologies including JavaScript, React, and web development. I'm always interested in discussing potential opportunities for collaboration or simply connecting professionally.
+    ${customMessage ? customMessage + '\n\n' : ''}I'm a software engineer with experience in various programming technologies including JavaScript, React, and web development. I'm always interested in discussing potential opportunities for collaboration or simply connecting professionally.
 
-Thank you for your time, and I look forward to hearing from you.
+    Thank you for your time, and I look forward to hearing from you.
 
-Best regards,
-${name}
-${process.env.GMAIL_USER}`;
+    Best regards,
+    ${name}
+    ${process.env.GMAIL_USER}`;
 
-    return await this.sendEmail({ to, subject, body });
-  }
+      return await this.sendEmail({ to, subject, body });
+    }
 
   async checkGmailConfig() {
     console.error('=== Gmail Config Check ===');
     console.error('GMAIL_USER:', process.env.GMAIL_USER || 'MISSING');
     console.error('GMAIL_APP_PASSWORD:', process.env.GMAIL_APP_PASSWORD ? `SET (${process.env.GMAIL_APP_PASSWORD.length} chars)` : 'MISSING');
     console.error('GMAIL_AUTH_METHOD:', process.env.GMAIL_AUTH_METHOD || 'NOT SET');
-    
+
     if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
       const missing = [];
       if (!process.env.GMAIL_USER) missing.push('GMAIL_USER');
       if (!process.env.GMAIL_APP_PASSWORD) missing.push('GMAIL_APP_PASSWORD');
-      
+
       return {
         content: [
           {
@@ -295,7 +295,7 @@ ${process.env.GMAIL_USER}`;
       const transporter = await this.createTransporter();
       await transporter.verify();
       console.error('Gmail connection successful!');
-      
+
       return {
         content: [
           {
@@ -373,7 +373,7 @@ ${process.env.GMAIL_USER}`;
   }
 
   templateDir() {
-    return path.join(process.cwd(), 'templates');
+    return path.join(path.dirname(new URL(import.meta.url).pathname), 'templates');
   }
 
   async listEmailTemplates() {
