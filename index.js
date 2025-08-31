@@ -72,6 +72,23 @@ class GmailMCPServer {
 
     this.setupToolHandlers();
   }
+  // Utility: Extract Mustache variable names from a template file
+  extractTemplateVariables(templateName) {
+    const dir = this.templateDir();
+    const filePath = path.join(dir, `${templateName}.txt`);
+    if (!fs.existsSync(filePath)) {
+      return { content: [{ type: 'text', text: `Template not found: ${templateName}` }] };
+    }
+    const raw = fs.readFileSync(filePath, 'utf8');
+    // Find all {{variable}} and {{#variable}} tags
+    const regex = /{{[#^]?\s*([\w]+)\s*}}/g;
+    const variables = new Set();
+    let match;
+    while ((match = regex.exec(raw)) !== null) {
+      variables.add(match[1]);
+    }
+    return { content: [{ type: 'text', text: `Variables in template '${templateName}':\n` + Array.from(variables).join(', ') }] };
+  }
 
   setupToolHandlers() {
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -171,6 +188,17 @@ class GmailMCPServer {
               required: ['to', 'template'],
             },
           },
+            {
+              name: 'extract_template_variables',
+              description: 'List all Mustache variables used in a template',
+              inputSchema: {
+                type: 'object',
+                properties: {
+                  template: { type: 'string', description: 'Template name (filename without extension)' }
+                },
+                required: ['template']
+              }
+            },
         ],
       };
     });
@@ -200,6 +228,8 @@ class GmailMCPServer {
             return await this.listEmailTemplates();
           case 'send_template_email':
             return await this.sendTemplateEmail(args);
+            case 'extract_template_variables':
+              return this.extractTemplateVariables(args.template);
           default:
             throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
         }
